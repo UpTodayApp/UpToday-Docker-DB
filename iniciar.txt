@@ -1,0 +1,34 @@
+construir la imagen
+
+docker build -t terobyte .
+
+crear un volumen 
+
+docker volume create tero-data
+
+ejecutar el contenedor
+
+docker run -d -rm -p 3306:3306 --name terotero -v tero-data:/var/lib/mysql terobyte
+
+para utilizar la base de datos:
+
+primero nos conectamos al contenedor
+
+docker exec -it terotero mysql -u root -p //la contraseña es 1234
+
+show databases; // esto para ver que se haya creado la base de datos
+
+use database uptoday; //usa la base de datos 
+
+docker system prune // elimina todo lo que no este corriendo
+
+docker system prune --volume //elimina todas las persistencias
+
+docker exec -it (id contenedor) bash
+
+
+
+
+
+
+

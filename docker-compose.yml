@@ -1,0 +1,25 @@
+name: terobyte
+
+services:
+  terobyte_db:
+    build:
+      context: ./base
+    container_name: terobyte_db
+
+
+    ports:
+      - "3306:3306"
+    environment:
+       MYSQL_ROOT_PASSWORD: "1234"
+       
+
+
+
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/start.sql
+      - tero-volume:/var/lib/mysql
+
+
+
+volumes:
+  tero-volume: {}
