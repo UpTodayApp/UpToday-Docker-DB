@@ -2,23 +2,26 @@ DROP DATABASE IF EXISTS uptoday;
 DROP USER IF EXISTS administrador@127.0.0.1;
 DROP USER IF EXISTS moderador@127.0.0.1;
 DROP USER IF EXISTS usuario@127.0.0.1;
-CREATE DATABASE uptoday CHARSET df8mb4-0900_ai_ci;
+CREATE DATABASE uptoday;
 USE uptoday;
 
 create table usuario (
 id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-nombre varchar(15), 
+nombre varchar(15) not null unique,
 contrasenia varchar(16),
 correo varchar(255), 
-nacimiento date, 
+nacimiento date,
+genero varchar(6),
 fecha_notificacion date,
 contenido_notificacion varchar(50),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
 CHECK (nacimiento < sysdate() - INTERVAL 18 YEAR),
-CHECK (CHAR_LENGTH(contrasenia) >= 8 AND CHAR_LENGTH(contrasenia) <= 16),
-CHECK (fecha_notificacion = sysdate())
+CHECK (CHAR_LENGTH(contrasenia) >= 8 AND CHAR_LENGTH(contrasenia) <= 255),
+CHECK (correo LIKE '%@%')
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table chat (
@@ -28,7 +31,8 @@ visto boolean,
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (fecha = sysdate())
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table grupo (
@@ -38,7 +42,9 @@ descripcion varchar(255),
 foto varchar(50),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-deleted_at datetime DEFAULT NULL
+deleted_at datetime DEFAULT NULL,
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table comentario (
@@ -48,18 +54,20 @@ megusta varchar(4),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table post (
 id int  UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-contenido varchar(255), 
-fecha date, 
+contenido varchar(255),  
 megusta varchar(4), 
 etiquetas varchar(30),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (fecha = sysdate())
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table perfil (
@@ -71,7 +79,9 @@ biografia varchar(255),
 redes varchar(255),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-deleted_at datetime DEFAULT NULL 
+deleted_at datetime DEFAULT NULL,
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at) 
 );
 
 create table evento (
@@ -85,7 +95,8 @@ etiquetas varchar(30),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (fecha = sysdate())
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table lugar (
@@ -100,149 +111,171 @@ multimedia varchar(255),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL, 
-verificado boolean
+verificado boolean,
+CHECK (updated_at<= sysdate()),
+CHECK (updated_at >= created_at)
 );
 
 create table g_admin(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 grupo_id int UNSIGNED,
-PRIMARY KEY (usuario_id, grupo_id),
+UNIQUE (usuario_id, grupo_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (grupo_id) REFERENCES grupo(id)
 );
 
 create table g_crea(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 grupo_id int UNSIGNED,
-PRIMARY KEY (usuario_id, grupo_id),
+UNIQUE (usuario_id, grupo_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (grupo_id) REFERENCES grupo(id)
 );
 
 create table participa(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 grupo_id int UNSIGNED,
-PRIMARY KEY (usuario_id, grupo_id),
+UNIQUE (usuario_id, grupo_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (grupo_id) REFERENCES grupo(id)
 );
 
 create table tiene(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 grupo_id int UNSIGNED,
 chat_id int UNSIGNED,
-PRIMARY KEY (grupo_id, chat_id),
+UNIQUE (grupo_id, chat_id),
 FOREIGN KEY (grupo_id) REFERENCES grupo(id),
 FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
 
 create table interactua(
-usuario_id int UNSIGNED,
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+usuario_id1 int UNSIGNED,
+usuario_id2 int UNSIGNED,
 chat_id int UNSIGNED,
-PRIMARY KEY (usuario_id, chat_id),
-FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+UNIQUE (usuario_id1, usuario_id2, chat_id),
+FOREIGN KEY (usuario_id1) REFERENCES usuario(id),
+FOREIGN KEY (usuario_id2) REFERENCES usuario(id),
 FOREIGN KEY (chat_id) REFERENCES chat(id)
 );
 
 create table p_grupo(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 post_id int UNSIGNED,
 grupo_id int UNSIGNED,
-PRIMARY KEY (post_id, grupo_id),
+UNIQUE (post_id, grupo_id),
 FOREIGN KEY (post_id) REFERENCES post(id),
 FOREIGN KEY (grupo_id) REFERENCES grupo(id)
 );
 
 create table p_evento(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 post_id int UNSIGNED,
 evento_id int UNSIGNED,
-PRIMARY KEY (post_id, evento_id),
+UNIQUE (post_id, evento_id),
 FOREIGN KEY (post_id) REFERENCES post(id),
 FOREIGN KEY (evento_id) REFERENCES evento(id)
 );
 
 create table realiza(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 post_id int UNSIGNED,
-PRIMARY KEY (usuario_id, post_id),
+UNIQUE (usuario_id, post_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 create table publica(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 comentario_id int UNSIGNED,
-PRIMARY KEY (usuario_id, comentario_id),
+UNIQUE (usuario_id, comentario_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (comentario_id) REFERENCES comentario(id)
 );
 
 create table c_evento(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 comentario_id int UNSIGNED,
 evento_id int UNSIGNED,
-PRIMARY KEY (comentario_id, evento_id),
+UNIQUE (comentario_id, evento_id),
 FOREIGN KEY (comentario_id) REFERENCES comentario(id),
 FOREIGN KEY (evento_id) REFERENCES evento(id)
 );
 
 create table c_lugar(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 comentario_id int UNSIGNED,
 lugar_id int UNSIGNED,
-PRIMARY KEY (comentario_id, lugar_id),
+UNIQUE (comentario_id, lugar_id),
 FOREIGN KEY (comentario_id) REFERENCES comentario(id),
 FOREIGN KEY (lugar_id) REFERENCES lugar(id)
 );
 
 create table c_post(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 comentario_id int UNSIGNED,
 post_id int UNSIGNED,
-PRIMARY KEY (comentario_id, post_id),
+UNIQUE (comentario_id, post_id),
 FOREIGN KEY (comentario_id) REFERENCES comentario(id),
 FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 create table posee(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 perfil_id int UNSIGNED,
-PRIMARY KEY (usuario_id, perfil_id),
+UNIQUE (usuario_id, perfil_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (perfil_id) REFERENCES perfil(id)
 );
 
 create table busca(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 lugar_id int UNSIGNED,
-PRIMARY KEY (usuario_id, lugar_id),
+UNIQUE (usuario_id, lugar_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (lugar_id) REFERENCES lugar(id)
 );
 
 create table sugiere(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 lugar_id int UNSIGNED,
-PRIMARY KEY (usuario_id, lugar_id),
+UNIQUE (usuario_id, lugar_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (lugar_id) REFERENCES lugar(id)
 );
 
 create table asiste(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 evento_id int UNSIGNED,
-PRIMARY KEY (usuario_id, evento_id),
+UNIQUE (usuario_id, evento_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (evento_id) REFERENCES evento(id)
 );
 
 create table e_crea(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id int UNSIGNED,
 evento_id int UNSIGNED,
-PRIMARY KEY (usuario_id, evento_id),
+UNIQUE (usuario_id, evento_id),
 FOREIGN KEY (usuario_id) REFERENCES usuario(id),
 FOREIGN KEY (evento_id) REFERENCES evento(id)
 );
 
 create table sigue(
+id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 usuario_id1 int UNSIGNED,
 usuario_id2 int UNSIGNED,
-PRIMARY KEY (usuario_id1, usuario_id2),
+UNIQUE (usuario_id1, usuario_id2),
 FOREIGN KEY (usuario_id1) REFERENCES usuario(id),
 FOREIGN KEY (usuario_id2) REFERENCES usuario(id)
 );
@@ -334,6 +367,9 @@ START TRANSACTION;
 INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, fecha_notificacion, contenido_notificacion)
 VALUES ('Carlos', 'password123', 'carlos@example.com', '1980-01-01', CURDATE(), 'Notificación de prueba');
 
+INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, fecha_notificacion, contenido_notificacion)
+VALUES ('Juan', 'password123', 'Juan@example.com', '1980-01-01', CURDATE(), 'Notificación de prueba');
+
 INSERT INTO chat (contenido, visto)
 VALUES ('Hola, ¿cómo estás?', true);
 
@@ -343,7 +379,7 @@ VALUES ('Grupo de Prueba', 'Este es un grupo de prueba.', 'foto.png');
 INSERT INTO comentario (contenido, megusta)
 VALUES ('Este es un comentario de prueba', '10');
 
-INSERT INTO post (contenido, fecha, megusta, etiquetas)
+INSERT INTO post (contenido, created_at, megusta, etiquetas)
 VALUES ('Este es un post de prueba', CURDATE(), '5', 'prueba,post');
 
 INSERT INTO perfil (estado, pais, ciudad, biografia, redes)
@@ -368,8 +404,8 @@ VALUES (1, 1);
 INSERT INTO tiene (grupo_id, chat_id)
 VALUES (1, 1);
 
-INSERT INTO interactua (usuario_id, chat_id)
-VALUES (1, 1);
+INSERT INTO interactua (usuario_id1,usuario_id2, chat_id)
+VALUES (1, 2, 1);
 
 INSERT INTO p_grupo (post_id, grupo_id)
 VALUES (1, 1);
@@ -408,7 +444,7 @@ INSERT INTO e_crea (usuario_id, evento_id)
 VALUES (1, 1);
 
 INSERT INTO sigue (usuario_id1, usuario_id2)
-VALUES (1, 2);
+VALUES (1, 1);
 
 COMMIT;
 
