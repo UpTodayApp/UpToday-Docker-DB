@@ -1,0 +1,15 @@
+RNE
+
+
+-id positivos son auto incrementales
+-las contraseñas deben ser mayor a ocho caracteres y menor a 255
+-la fehca de nacimiento debe ser menor a la del sistema y tener al menos 18 años menos
+- ninguna fecha puede ser mayor o menor a la fecha del sistema al momento de creacion
+- el usuario no puede seguirse a si mismo
+- el usuario no puede chatear con sigo mismo
+- ningun contenido puede ser nulo
+- created_at y updated_at <= fecha del sistema
+- upadted_at => created_at
+- el nombre de usuario no puede ser nulo y debe ser único
+- visto solo puede ser verdadero o falso
+- el correo tiene que contener un arroba 

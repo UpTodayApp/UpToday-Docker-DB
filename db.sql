@@ -5,23 +5,22 @@ DROP USER IF EXISTS usuario@127.0.0.1;
 CREATE DATABASE uptoday;
 USE uptoday;
 
-create table usuario (
-id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-nombre varchar(15) not null unique,
-contrasenia varchar(16),
-correo varchar(255), 
-nacimiento date,
-genero varchar(6),
-fecha_notificacion date,
-contenido_notificacion varchar(50),
-created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-deleted_at datetime DEFAULT NULL,
-CHECK (nacimiento < sysdate() - INTERVAL 18 YEAR),
-CHECK (CHAR_LENGTH(contrasenia) >= 8 AND CHAR_LENGTH(contrasenia) <= 255),
-CHECK (correo LIKE '%@%')
-CHECK (updated_at<= sysdate()),
-CHECK (updated_at >= created_at)
+CREATE TABLE usuario (
+  id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nombre varchar(50) not null unique,
+  contrasenia varchar(255),
+  correo varchar(255), 
+  nacimiento date,
+  genero varchar(9),
+  fecha_notificacion date,
+  contenido_notificacion varchar(50),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at datetime DEFAULT NULL,
+  CHECK (CHAR_LENGTH(contrasenia) >= 8 AND CHAR_LENGTH(contrasenia) <= 255),
+  CHECK (correo LIKE '%@%'),
+  CHECK (updated_at <= sysdate()),
+  CHECK (updated_at >= created_at)
 );
 
 create table chat (
@@ -31,7 +30,7 @@ visto boolean,
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at)
 );
 
@@ -43,7 +42,7 @@ foto varchar(50),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at)
 );
 
@@ -54,7 +53,7 @@ megusta varchar(4),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at)
 );
 
@@ -66,7 +65,7 @@ etiquetas varchar(30),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at)
 );
 
@@ -80,7 +79,7 @@ redes varchar(255),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at) 
 );
 
@@ -95,7 +94,7 @@ etiquetas varchar(30),
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at)
 );
 
@@ -112,8 +111,24 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at datetime DEFAULT NULL, 
 verificado boolean,
-CHECK (updated_at<= sysdate()),
+CHECK (updated_at <= sysdate()),
 CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE megusta (
+  id int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  usuario_id int UNSIGNED NOT NULL,
+  post_id int UNSIGNED,
+  comentario_id int UNSIGNED,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at datetime DEFAULT NULL,
+  CHECK (updated_at <= CURDATE()),
+  CHECK (updated_at >= created_at),
+  CHECK (post_id IS NULL OR comentario_id IS NULL), 
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+  FOREIGN KEY (post_id) REFERENCES post(id),
+  FOREIGN KEY (comentario_id) REFERENCES comentario(id)
 );
 
 create table g_admin(
@@ -365,10 +380,10 @@ START TRANSACTION;
 
 
 INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, fecha_notificacion, contenido_notificacion)
-VALUES ('Carlos', 'password123', 'carlos@example.com', '1980-01-01', CURDATE(), 'Notificación de prueba');
+VALUES ('Carlos', 'password123', 'carlos@example.com', '1980-01-01', sysdate(), 'Notificación de prueba');
 
 INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, fecha_notificacion, contenido_notificacion)
-VALUES ('Juan', 'password123', 'Juan@example.com', '1980-01-01', CURDATE(), 'Notificación de prueba');
+VALUES ('Juan', 'password123', 'Juan@example.com', '1980-01-01', sysdate(), 'Notificación de prueba');
 
 INSERT INTO chat (contenido, visto)
 VALUES ('Hola, ¿cómo estás?', true);
@@ -380,13 +395,13 @@ INSERT INTO comentario (contenido, megusta)
 VALUES ('Este es un comentario de prueba', '10');
 
 INSERT INTO post (contenido, created_at, megusta, etiquetas)
-VALUES ('Este es un post de prueba', CURDATE(), '5', 'prueba,post');
+VALUES ('Este es un post de prueba', sysdate(), '5', 'prueba,post');
 
 INSERT INTO perfil (estado, pais, ciudad, biografia, redes)
 VALUES ('Activo', 'Uruguay', 'Montevideo', 'Biografía de prueba', 'Twitter, Facebook');
 
 INSERT INTO evento (nombre, participan, detalles, fecha, ubicacion, etiquetas)
-VALUES ('Evento de Prueba', 100, 'Detalles del evento', CURDATE(), 'Montevideo', 'evento,prueba');
+VALUES ('Evento de Prueba', 100, 'Detalles del evento', sysdate(), 'Montevideo', 'evento,prueba');
 
 INSERT INTO lugar (nombre, pais, ciudad, calle, numero, etiquetas, multimedia, verificado)
 VALUES ('Lugar de Prueba', 'Uruguay', 'Montevideo', 'Calle Falsa', 123, 'prueba,lugar', 'foto_lugar.png', true);

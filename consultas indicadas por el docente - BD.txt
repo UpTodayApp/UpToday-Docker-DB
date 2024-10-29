@@ -1,0 +1,97 @@
+1. días de mayor actividad:
+
+--  Días de mayor actividad por tipo de acción
+SELECT 
+    DATE(created_at) AS dia,
+    COUNT(CASE WHEN t = 'post' THEN 1 END) AS posts,
+    COUNT(CASE WHEN t = 'evento' THEN 1 END) AS eventos,
+    COUNT(CASE WHEN t = 'comentario' THEN 1 END) AS comentarios,
+    COUNT(CASE WHEN t = 'megusta' THEN 1 END) AS me_gusta,
+    COUNT(CASE WHEN t = 'chat' THEN 1 END) AS chats
+FROM (
+    SELECT created_at, 'post' AS t FROM post
+    UNION ALL
+    SELECT created_at, 'evento' AS t FROM evento
+    UNION ALL
+    SELECT created_at, 'comentario' AS t FROM comentario
+    UNION ALL
+    SELECT created_at, 'megusta' AS t FROM post WHERE `megusta` IS NOT NULL
+    UNION ALL
+    SELECT created_at, 'chat' AS t FROM chat
+) AS acciones
+GROUP BY dia
+ORDER BY posts DESC, eventos DESC, comentarios DESC, me_gusta DESC, chats DESC;
+
+2. Franjas de edad con mas actividad 
+
+-- Franjas de edad con mayor actividad
+SELECT 
+    CASE 
+        WHEN TIMESTAMPDIFF(YEAR, nacimiento, CURDATE()) BETWEEN 18 AND 30 THEN '18-30'
+        WHEN TIMESTAMPDIFF(YEAR, nacimiento, CURDATE()) BETWEEN 30 AND 40 THEN '30-40'
+        ELSE '+40' 
+    END AS franja_edad,
+    COUNT(DISTINCT u.id) AS usuarios_activos,
+    COUNT(DISTINCT p.id) AS posts,
+    COUNT(DISTINCT e.id) AS eventos,
+    COUNT(DISTINCT c.id) AS comentarios,
+    COUNT(DISTINCT ch.id) AS chats
+FROM usuario AS u
+LEFT JOIN realiza AS r ON u.id = r.usuario_id
+LEFT JOIN post AS p ON r.post_id = p.id
+LEFT JOIN e_crea AS ec ON u.id = ec.usuario_id
+LEFT JOIN evento AS e ON ec.evento_id = e.id
+LEFT JOIN publica AS pb ON u.id = pb.usuario_id
+LEFT JOIN comentario AS c ON pb.comentario_id = c.id
+LEFT JOIN interactua AS i ON u.id = i.usuario_id1
+LEFT JOIN chat AS ch ON i.chat_id = ch.id
+GROUP BY franja_edad
+ORDER BY usuarios_activos DESC, posts DESC, eventos DESC, comentarios DESC, chats DESC;
+
+3. porcentaje de hombres y mujeres en cada franja de edad: 
+
+SELECT
+    CASE
+        WHEN TIMESTAMPDIFF(YEAR, nacimiento, CURDATE()) BETWEEN 18 AND 30 THEN '18-30'
+        WHEN TIMESTAMPDIFF(YEAR, nacimiento, CURDATE()) BETWEEN 30 AND 40 THEN '30-40'
+        ELSE '+40'
+    END AS franja_edad,
+    SUM(CASE WHEN genero = 'hombre' THEN 1 ELSE 0 END) AS hombres,
+    SUM(CASE WHEN genero = 'mujer' THEN 1 ELSE 0 END) AS mujeres,
+    SUM(CASE WHEN genero = 'otro' THEN 1 ELSE 0 END) AS otro,
+    COUNT(DISTINCT u.id) AS total_usuarios,
+    (SUM(CASE WHEN genero = 'hombre' THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT u.id)) AS porcentaje_hombres,
+    (SUM(CASE WHEN genero = 'mujer' THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT u.id)) AS porcentaje_mujeres,
+    (SUM(CASE WHEN genero = 'otro' THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT u.id)) AS porcentaje_otro
+FROM usuario AS u
+GROUP BY franja_edad
+ORDER BY total_usuarios DESC;
+
+4. cantidad de hombres y mujeres registrado
+
+SELECT 
+    SUM(CASE WHEN genero = 'hombre' THEN 1 ELSE 0 END) AS hombres,
+    SUM(CASE WHEN genero = 'mujer' THEN 1 ELSE 0 END) AS mujeres,
+    SUM(CASE WHEN genero = 'otro' THEN 1 ELSE 0 END) AS otro,
+    COUNT(DISTINCT u.id) AS total_usuarios
+FROM usuario AS u;
+
+5. consultar todo lo echo por un usuario 
+
+-- Todo lo que realiza un usuario (ejemplo con usuario_id = 1)
+SELECT 
+    u.nombre AS usuario,
+    p.contenido AS post,
+    e.nombre AS evento,
+    c.contenido AS comentario,
+    ch.contenido AS chat
+FROM usuario AS u
+LEFT JOIN realiza AS r ON u.id = r.usuario_id
+LEFT JOIN post AS p ON r.post_id = p.id
+LEFT JOIN e_crea AS ec ON u.id = ec.usuario_id
+LEFT JOIN evento AS e ON ec.evento_id = e.id
+LEFT JOIN publica AS pb ON u.id = pb.usuario_id
+LEFT JOIN comentario AS c ON pb.comentario_id = c.id
+LEFT JOIN interactua AS i ON u.id = i.usuario_id1
+LEFT JOIN chat AS ch ON i.chat_id = ch.id
+WHERE u.id = 1;
