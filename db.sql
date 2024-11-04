@@ -123,7 +123,7 @@ CREATE TABLE megusta (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at datetime DEFAULT NULL,
-  CHECK (updated_at <= CURDATE()),
+  CHECK (updated_at <= sysdate()),
   CHECK (updated_at >= created_at),
   CHECK (post_id IS NULL OR comentario_id IS NULL), 
   FOREIGN KEY (usuario_id) REFERENCES usuario(id),
