@@ -584,3 +584,71 @@ ROLLBACK;
 INSERT INTO `admin`(id, name, email, email_verified_at, password,  remember_token, created_at, updated_at) VALUES (1,'usuario','usuario@usuario.com',NULL,'$2y$10$om5sEc.3.Gi9Uf6S9NU0DeY7u6rJO9YQDud3L9rC46TtD/ON35/6G',NULL,'2024-08-13 02:25:25','2024-08-13 02:25:25');
 
 INSERT INTO `users`(id, name, email, email_verified_at, password,  remember_token, created_at, updated_at) VALUES (1,'usuario','usuario@usuario.com',NULL,'$2y$10$om5sEc.3.Gi9Uf6S9NU0DeY7u6rJO9YQDud3L9rC46TtD/ON35/6G',NULL,'2024-08-13 02:25:25','2024-08-13 02:25:25');
+
+use uptoday;
+
+-- vista para ver los post de usuarios
+
+CREATE VIEW post_de_usuarios AS
+SELECT 
+    p.id AS post_id,
+    p.contenido AS post_contenido,
+    p.megusta AS post_megusta,
+    p.etiquetas AS post_etiquetas,
+    p.created_at AS post_creado_en,
+    u.nombre AS usuario_nombre,
+    u.correo AS usuario_correo
+FROM 
+    post AS p
+JOIN 
+    realiza AS r ON p.id = r.post_id
+JOIN 
+    usuario AS u ON r.usuario_id = u.id
+ORDER BY 
+    p.created_at DESC;
+        
+-- vista para ver los post de grupos
+    
+    CREATE VIEW post_de_grupo AS
+SELECT 
+    p.id AS post_id,
+    p.contenido AS post_contenido,
+    p.megusta AS post_megusta,
+    p.etiquetas AS post_etiquetas,
+    p.created_at AS post_creado_en,
+    g.nombre AS grupo_nombre,
+    g.descripcion AS grupo_descripcion
+FROM 
+    post AS p
+JOIN 
+    p_grupo AS pg ON p.id = pg.post_id
+JOIN 
+    grupo AS g ON pg.grupo_id = g.id
+ORDER BY 
+    p.created_at DESC;
+    
+    
+    -- vista de los comentarios de un post
+    
+    CREATE VIEW comentario_de_post AS
+SELECT 
+    c.id AS comentario_id,
+    c.contenido AS comentario_contenido,
+    c.megusta AS comentario_megusta,
+    c.created_at AS comentario_creado_en,
+    u.nombre AS usuario_nombre,
+    u.correo AS usuario_correo,
+    p.contenido AS post_contenido,
+    p.id AS post_id
+FROM 
+    comentario AS c
+JOIN 
+    publica AS pub ON c.id = pub.comentario_id
+JOIN 
+    usuario AS u ON pub.usuario_id = u.id
+JOIN 
+    c_post AS cp ON c.id = cp.comentario_id
+JOIN 
+    post AS p ON cp.post_id = p.id
+ORDER BY 
+    c.created_at DESC;
