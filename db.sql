@@ -468,88 +468,125 @@ grant delete on uptoday.e_crea to "moderador"@"127.0.0.1";
 START TRANSACTION;
 
 
-INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, fecha_notificacion, contenido_notificacion)
-VALUES ('Carlos', 'password123', 'carlos@example.com', '1980-01-01', sysdate(), 'Notificación de prueba');
+INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, genero) VALUES 
+('Juan Pérez', 'password123', 'juan.perez@email.com', '1995-03-15', 'Masculino'),
+('Ana Garcia', 'securePassword', 'ana.garcia@example.com', '2000-07-28', 'Femenino'),
+('Carlos Rodriguez', 'strongPass', 'carlos.rodriguez@test.com', '1998-11-02', 'Masculino'),
+('Maria Lopez', 'mySecurePass', 'maria.lopez@mail.com', '1997-05-10', 'Femenino'),
+('Sofia Gonzalez', 'password456', 'sofia.gonzalez@mail.com', '1999-09-21', 'Femenino'),
+('Pedro Martinez', 'pass1234', 'pedro.martinez@test.com', '2001-02-18', 'Masculino');
 
-INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, fecha_notificacion, contenido_notificacion)
-VALUES ('Juan', 'password123', 'Juan@example.com', '1980-01-01', sysdate(), 'Notificación de prueba');
+INSERT INTO usuario (nombre, contrasenia, correo, nacimiento, genero, fecha_notificacion, contenido_notificacion) VALUES 
+('Administrador', 'admin123', 'admin@uptoday.com', '1990-01-01', 'Masculino', '2024-03-15', 'Nueva actualización de la aplicación');
 
-INSERT INTO chat (contenido, visto)
-VALUES ('Hola, ¿cómo estás?', true);
+INSERT INTO grupo (nombre, descripcion, foto) VALUES 
+('Amantes del cine', 'Grupo para cinéfilos', 'cine.jpg'),
+('Programación Web', 'Grupo de aprendizaje de desarrollo web', 'web.png'),
+('Viajeros del mundo', 'Comunidad de viajeros apasionados', 'viajes.jpeg'),
+('Música en vivo', 'Para los amantes de los conciertos', 'concierto.jpg'),
+('Lectura y café', 'Comparte tus libros favoritos', 'libro.png');
 
-INSERT INTO grupo (nombre, descripcion, foto)
-VALUES ('Grupo de Prueba', 'Este es un grupo de prueba.', 'foto.png');
+INSERT INTO chat (contenido, visto) VALUES 
+('Hola, ¿qué tal?', TRUE),
+('Me encanta esa película!', TRUE),
+('¿Tienes el link del concierto?', FALSE),
+('Recomiendo este libro!', TRUE),
+('¡Nos vemos en el próximo viaje!', FALSE);
 
-INSERT INTO comentario (contenido, megusta)
-VALUES ('Este es un comentario de prueba', '10');
+INSERT INTO comentario (contenido, megusta) VALUES 
+('¡Excelente película!', TRUE),
+('¡Me encanta el disenio web!', TRUE),
+('Viajar es lo mejor!', TRUE),
+('¡Un concierto genial!', TRUE),
+('Un libro que engancha', TRUE);
 
-INSERT INTO post (contenido, created_at, megusta, etiquetas)
-VALUES ('Este es un post de prueba', sysdate(), '5', 'prueba,post');
+INSERT INTO post (contenido, megusta, etiquetas) VALUES 
+('Nuevo estreno de cine este fin de semana', TRUE, 'cine, estreno'),
+('Aprendiendo Javascript para mi nuevo proyecto', TRUE, 'programación, javascript'),
+('Próximo viaje a la playa!', TRUE, 'viaje, playa'),
+('Concierto de mi banda favorita', TRUE, 'concierto, música'),
+('Mi libro favorito del momento', TRUE, 'lectura, libro');
 
-INSERT INTO perfil (estado, pais, ciudad, biografia, redes)
-VALUES ('Activo', 'Uruguay', 'Montevideo', 'Biografía de prueba', 'Twitter, Facebook');
+INSERT INTO perfil (estado, pais, ciudad, biografia, redes) VALUES 
+('Activo', 'Espania', 'Madrid', 'Soy un apasionado del cine', 'www.twitter.com/cinefilo'),
+('Activo', 'Argentina', 'Buenos Aires', 'Desarrollador web freelance', 'www.linkedin.com/in/desarrollador'),
+('Activo', 'México', 'Guadalajara', 'Amo viajar y conocer culturas', 'www.instagram.com/viajero'),
+('Activo', 'Colombia', 'Bogotá', 'Músico y amante de los conciertos', 'www.youtube.com/musiclover'),
+('Activo', 'Perú', 'Lima', 'Lector empedernido', 'www.goodreads.com/reader');
 
-INSERT INTO evento (nombre, participan, detalles, fecha, ubicacion, etiquetas)
-VALUES ('Evento de Prueba', 100, 'Detalles del evento', sysdate(), 'Montevideo', 'evento,prueba');
+INSERT INTO evento (nombre, participan, detalles, fecha, ubicacion, etiquetas) VALUES 
+('Festival de Cine', 500, 'Proyecciones de películas y talleres', '2024-04-10', 'Auditorio Municipal', 'cine, festival'),
+('Hackathon Web', 100, 'Desarrollo de proyectos web en 24 horas', '2024-05-15', 'Universidad Tecnológica', 'programación, hackathon'),
+('Viaje a las Islas Canarias', 20, 'Explora las playas y volcanes', '2024-06-20', 'Aeropuerto de Tenerife', 'viaje, islas canarias'),
+('Concierto de Rock', 1000, 'Banda de rock nacional en concierto', '2024-07-25', 'Estadio Olímpico', 'concierto, rock'),
+('Club de Lectura', 15, 'Reunión para hablar de libros', '2024-08-10', 'Cafetería Central', 'lectura, club');
 
-INSERT INTO lugar (nombre, pais, ciudad, calle, numero, etiquetas, multimedia, verificado)
-VALUES ('Lugar de Prueba', 'Uruguay', 'Montevideo', 'Calle Falsa', 123, 'prueba,lugar', 'foto_lugar.png', true);
+INSERT INTO lugar (nombre, pais, ciudad, calle, numero, etiquetas, multimedia, verificado) VALUES 
+('Cine Ideal', 'Espania', 'Madrid', 'Calle Mayor', 12, 'cine, madrid', 'cine_ideal.jpg', TRUE),
+('Academia Web', 'Argentina', 'Buenos Aires', 'Av. Corrientes', 1500, 'programación, buenos aires', 'academia_web.png', TRUE),
+('Playa de las Americas', 'Espania', 'Tenerife', 'Playa de las Americas', NULL, 'playa, tenerife', 'playa_americas.jpg', TRUE),
+('Estadio Nacional', 'Colombia', 'Bogotá', 'Av. El Dorado', 60-00, 'concierto, estadio', 'estadio_nacional.jpg', TRUE),
+('Cafetería Literaria', 'Perú', 'Lima', 'Av. Arequipa', 1234, 'cafeteria, lima', 'cafeteria_literaria.png', TRUE);
 
+INSERT INTO megusta (usuario_id, post_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO g_admin (usuario_id, grupo_id)
-VALUES (1, 1);
+INSERT INTO megusta (usuario_id, comentario_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO g_crea (usuario_id, grupo_id)
-VALUES (1, 1);
+INSERT INTO g_admin (usuario_id, grupo_id) VALUES
+(6, 1), (6, 2), (6, 3), (6, 4), (6, 5);
 
-INSERT INTO participa (usuario_id, grupo_id)
-VALUES (1, 1);
+INSERT INTO g_crea (usuario_id, grupo_id) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO tiene (grupo_id, chat_id)
-VALUES (1, 1);
+INSERT INTO participa (usuario_id, grupo_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO interactua (usuario_id1,usuario_id2, chat_id)
-VALUES (1, 2, 1);
+INSERT INTO tiene (grupo_id, chat_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO p_grupo (post_id, grupo_id)
-VALUES (1, 1);
+INSERT INTO interactua (usuario_id1, usuario_id2, chat_id) VALUES
+(1, 2, 1), (2, 1, 1), (3, 4, 2), (4, 3, 2), (5, 6, 3);
 
-INSERT INTO p_evento (post_id, evento_id)
-VALUES (1, 1);
+INSERT INTO p_grupo (post_id, grupo_id) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO realiza (usuario_id, post_id)
-VALUES (1, 1);
+INSERT INTO p_evento (post_id, evento_id) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO publica (usuario_id, comentario_id)
-VALUES (1, 1);
+INSERT INTO realiza (usuario_id, post_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO c_evento (comentario_id, evento_id)
-VALUES (1, 1);
+INSERT INTO publica (usuario_id, comentario_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO c_lugar (comentario_id, lugar_id)
-VALUES (1, 1);
+INSERT INTO c_evento (comentario_id, evento_id) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO c_post (comentario_id, post_id)
-VALUES (1, 1);
+INSERT INTO c_lugar (comentario_id, lugar_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO posee (usuario_id, perfil_id)
-VALUES (1, 1);
+INSERT INTO c_post (comentario_id, post_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO busca (usuario_id, lugar_id)
-VALUES (1, 1);
+INSERT INTO posee (usuario_id, perfil_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO sugiere (usuario_id, lugar_id)
-VALUES (1, 1);
+INSERT INTO busca (usuario_id, lugar_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO asiste (usuario_id, evento_id)
-VALUES (1, 1);
+INSERT INTO sugiere (usuario_id, lugar_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO e_crea (usuario_id, evento_id)
-VALUES (1, 1);
+INSERT INTO asiste (usuario_id, evento_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
-INSERT INTO sigue (usuario_id1, usuario_id2)
-VALUES (1, 1);
+INSERT INTO e_crea (usuario_id, evento_id) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
+INSERT INTO sigue (usuario_id1, usuario_id2) VALUES
+(1, 2), (2, 1), (3, 4), (4, 3), (5, 6);
 COMMIT;
 
 ROLLBACK;
