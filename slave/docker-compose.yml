@@ -1,0 +1,20 @@
+services:
+  db_slave:
+    build:
+      context: ./base
+    container_name: slave_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"  
+      MYSQL_DATABASE: "slave"
+      MYSQL_USER: "slave"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_REPLICATION_SOURCE: "127.0.0.1:3306"
+      MYSQL_REPLICATION_ROLE: "slave"
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/start.sql
+      - tero-volume:/var/lib/mysql
+
+volumes:
+  tero-volume: {}

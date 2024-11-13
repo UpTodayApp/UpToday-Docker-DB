@@ -388,6 +388,8 @@ FOREIGN KEY (usuario_id2) REFERENCES usuario(id)
 CREATE USER "administrador"@"127.0.0.1" IDENTIFIED BY 'contrasenia';
 CREATE USER "moderador"@"127.0.0.1" IDENTIFIED BY 'contrasenia';
 CREATE USER "usuario"@"127.0.0.1" IDENTIFIED BY 'contrasenia';
+CREATE USER 'slave'@'%' IDENTIFIED BY '1234';
+GRANT REPLICATION SLAVE ON *.* TO 'slave'@'%';
 
 GRANT ALL PRIVILEGES ON uptoday.* TO "administrador"@"127.0.0.1";
 
