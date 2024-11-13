@@ -1,0 +1,83 @@
+1)  
+
+clonamos los repositorios de git hub:
+
+git clone https://github.com/UpTodayApp/UpToday-Docker-DB.git
+git clone https://github.com/UpTodayApp/UpToday-API-Post-Eventos.git
+git clone https://github.com/UpTodayApp/UpToday-API-Grupo.git
+git clone https://github.com/UpTodayApp/UpToday-API-Autenticacion.git
+git clone https://github.com/UpTodayApp/UpToday-BackOffice.git
+git clone https://github.com/UpTodayApp/UpToday-FrontEnd.git
+
+git clone -- clona el repositorio en la ruta que este ubicada la terminal
+
+2) 
+
+por cada repositorio, exeptuando el front-end, docker-db , que no necesita y la api-autenticacion que usa "composer update", ejecutamos el comando "composer install".
+
+composer install -- instala lo necesario para usar composer 
+composer update -- actualiza las librerias de composer
+
+3) 
+
+por cada repositorio, exeptuando el docker_db, se copia el archivo .env example, se pega en la misma ruta y se le cambia el nombre a .env, se debe editar el archivo .env que se creo y ponerle los siguientes parametros: 
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1:3306
+DB_PORT=3306
+DB_DATABASE=uptoday
+DB_USERNAME=root
+DB_PASSWORD=1234
+
+en cada uno de los repositorios se debe ejecutar el comando "php artisan key:generate"
+
+-- php artisan key:generate crea una clave de seguridad para las conecciones con la base de datos
+
+en el repositorio api-autenticación ejecutar "php artisan migrate"
+
+4) 
+
+en el repositorio de api-autenticacion se debe ejecutar "php  artisan  passport:keys", luego el comando "php artisan passport:client --password", se presiona dos veces enter y se guardan los valores del "client_id" y el "secret"
+
+-- php artisan passport:keys genera claves públicas y privadas para autenticación OAuth con Passport.
+-- php artisan passport:client --password crea un cliente de OAuth2 con autenticación.
+
+
+5)
+
+en el repositorio de docker_db se debe ejecutar el comando "docker compose up" 
+
+-- docker compose up lanza el script en el archivo docker-compose.yml
+
+6)
+
+en el repositorio de api-usuario-evento se debe ejecutar el comando "php artisan db:seed"
+
+--php artisan db:seed ejecuta los seeders del programa, crea datos en la base de datos
+
+7)
+ 
+- en el repositorio de api-post-eventos debe ejecutarse el comando php artisan serve
+- en el repositorio de api-autenticacion debe ejecutarse el comando php artisan serve --port 8001
+- en el repositorio de api-grupo debe ejecutarse el comando php artisan serve --port 8002
+
+--php artisan serve lanza el codigo en el puerto establecido, por defecto el 8000
+
+8) en el repositorio de front-end se debe modificar el archivo de login.js
+
+"
+var data = {
+            "username": correo,
+            "password": contrasena,
+            "grant_type": "password",
+            "client_id": 1, //aca se pone el client_id que se genero en el paso 4
+            "client_secret": "7UDsaVXXzxo8bpDi98xrjBvrJXKv5h8GTrPFoXng" //aca se pone el client_secret que se genero en el paso 4
+        }
+
+"
+
+9) 
+
+para probar el programa en su conjunto debe de ingresarse a la ruta localhost:8000/login
+
+ 
